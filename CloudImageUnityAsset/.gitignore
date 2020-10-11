@@ -1,0 +1,77 @@
+###
+# Unity folders and files
+###
+[Aa]ssets/AssetStoreTools*
+[Bb]uild/
+[Ll]ibrary/
+[Ll]ocal[Cc]ache/
+[Oo]bj/
+[Tt]emp/
+[Uu]nityGenerated/
+# file on crash reports
+sysinfo.txt
+# Unity3D generated meta files
+*.pidb.meta
+
+###
+# VS/MD solution and project files
+###
+[Ee]xportedObj/
+*.booproj
+*.csproj
+*.sln
+*.suo
+*.svd
+*.unityproj
+*.user
+*.userprefs
+*.pidb
+.DS_Store
+
+###
+# OS generated
+###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+*.ide
+*.bundle
+*.bundle
+Assets/Castle Breakout/Prefabs/UI/Level Thumbnail.prefab
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-shm
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-shm
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide
+*.ide-wal
+*.ide-shm
+*.ide
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide-shm
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/db.lock
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-shm
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v16/Browse.VC.db
+.vs/castlebreakout-UnityPC/v16/Server/sqlite3/db.lock
+.vscode/settings.json
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide-shm
+.vs/Castle BreakOut/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/db.lock
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-shm
+.vs/castlebreakout-UnityPC/v15/Server/sqlite3/storage.ide-wal
+.vs/castlebreakout-UnityPC/v16/Browse.VC.db
+.vs/castlebreakout-UnityPC/v16/Server/sqlite3/db.lock
+.vscode/settings.json
+Assets/StreamingAssets/build_info
+Assets/StreamingAssets/build_info
+Assets/StreamingAssets/build_info
