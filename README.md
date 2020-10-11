@@ -1,2 +1,2 @@
 # CloudImage
-A unity asset helps you to cache image from the internet.
+A unity asset helps you to cache an image from the internet.
