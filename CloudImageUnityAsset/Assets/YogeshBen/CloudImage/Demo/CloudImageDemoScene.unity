@@ -349,8 +349,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: 54.281}
+  m_SizeDelta: {x: 317.257, y: 108.56137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &686426076
 MonoBehaviour:
@@ -401,10 +401,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2813c7b4ec62960409be40d080295ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MediaUrl: https://unity3d.com/profiles/unity3d/themes/unity/images/pages/branding_trademarks/unity-tab-square-black.png
+  mediaUrl: s://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png
   ObjectType: 0
+  resetOnStart: 0
   enableCaching: 1
   cacheTimeOut: 72
+  mediaName: 
 --- !u!1 &975382361
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,10 +513,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2813c7b4ec62960409be40d080295ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MediaUrl: https://unity3d.com/profiles/unity3d/themes/unity/images/pages/branding_trademarks/unity-tab-square-black.png
+  mediaUrl: https://unity3d.com/profiles/unity3d/themes/unity/images/pages/branding_trademarks/unity-tab-square-black.png
   ObjectType: 2
+  resetOnStart: 0
   enableCaching: 1
   cacheTimeOut: 72
+  mediaName: 
 --- !u!1 &1301141261
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,10 +705,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2813c7b4ec62960409be40d080295ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MediaUrl: https://unity3d.com/profiles/unity3d/themes/unity/images/pages/branding_trademarks/unity-tab-square-black.png
+  mediaUrl: https://472574-1483159-raikfcquaxqncofqfm.stackpathdns.com/wp-content/uploads/2020/09/logo-1.png
   ObjectType: 1
+  resetOnStart: 0
   enableCaching: 1
   cacheTimeOut: 72
+  mediaName: 
 --- !u!1 &1578578142
 GameObject:
   m_ObjectHideFlags: 0

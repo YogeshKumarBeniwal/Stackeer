@@ -11,17 +11,36 @@ public class MessageDisplayManager : MonoBehaviour
 
     private void OnEnable()
     {
-        CloudImage.OnCloudImageDownloadFailed += DisplayMessage;
+        CloudImage.OnCloudImageDownloadFailed += DisplayMessageAndRetryToLoad;
+        CloudImage.OnCloudImageDownloadSuccessful += OnSuccessLoad;
     }
 
     private void OnDisable()
     {
-        CloudImage.OnCloudImageDownloadFailed -= DisplayMessage;
+        CloudImage.OnCloudImageDownloadFailed -= DisplayMessageAndRetryToLoad;
+        CloudImage.OnCloudImageDownloadSuccessful -= OnSuccessLoad;
     }
 
-    private void DisplayMessage(CloudImage cloudImage, string message)
+    //Do something on image load failed
+    private void OnSuccessLoad(CloudImage cloudImage)
+    {
+        messageText.text += cloudImage.mediaName + ": successfuly Loaded\n";
+    }
+
+    //Do something on image load failed
+    private void DisplayMessageAndRetryToLoad(CloudImage cloudImage,CloudImageErrorType errorType,string message)
     {
         messageText.text = message;
+
+        switch (errorType)
+        {
+            case CloudImageErrorType.CloudFail:
+                cloudImage.RefreshImage();
+                break;
+            case CloudImageErrorType.LocalFail:
+                cloudImage.RefreshImage();
+                break;
+        }
     }
 
 }

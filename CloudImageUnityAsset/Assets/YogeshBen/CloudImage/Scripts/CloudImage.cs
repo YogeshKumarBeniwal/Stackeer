@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 namespace YogeshBen.CloudImage
 {
+    // Enum for component attached to the game object
     public enum CloudImageType
     {
         UIImage,
@@ -14,29 +15,38 @@ namespace YogeshBen.CloudImage
         MeshRenderer
     }
 
+    public enum CloudImageErrorType
+    {
+        CloudFail,
+        LocalFail
+    }
+
     public class CloudImage : MonoBehaviour
     {
         [Header("Image Data")]
         [Tooltip("Media url you want to cache")]
-        public string MediaUrl;
+        public string mediaUrl;
         [Tooltip("Select which component you want CloudImage to effect")]
         public CloudImageType ObjectType;
 
         [Header("Cache Data")]
+        [Tooltip("Toggel if you want to reset the cache data on start")]
+        public bool resetOnStart = false;
         [Tooltip("Toggel if you want to cache data localy")]
         public bool enableCaching = true;
         [Tooltip("Time in hours you want the media to keep cached")]
         public int cacheTimeOut = 72;
 
-        //image Name
-        private string mediaName;
+        [HideInInspector]
+        // image Name
+        public string mediaName;
 
         // delegate and event for successful image download
         public delegate void CloudImageDownloadAction(CloudImage cloudImage);
-        public static event CloudImageDownloadAction OnCloudImageDownloaded;
+        public static event CloudImageDownloadAction OnCloudImageDownloadSuccessful;
 
         // delegate and event for Unsuccessful image download
-        public delegate void CloudImageDownloadFaileAction(CloudImage cloudImage, string errorMessage);
+        public delegate void CloudImageDownloadFaileAction(CloudImage cloudImage, CloudImageErrorType errorType, string errorMessage);
         public static event CloudImageDownloadFaileAction OnCloudImageDownloadFailed;
 
         private string lastUpdateTime
@@ -48,6 +58,9 @@ namespace YogeshBen.CloudImage
 
         void Start()
         {
+            if (resetOnStart)
+                DeleteCachedData();
+
             RefreshImage();
         }
 
@@ -57,14 +70,24 @@ namespace YogeshBen.CloudImage
         /// </summary>
         public void RefreshImage()
         {
-            mediaName = Path.GetFileNameWithoutExtension(MediaUrl);
+            if(mediaUrl == null)
+            {
+                Debug.LogError("You forget to set media URL");
+                return;
+            }
+
+            //Get name of the media
+            mediaName = Path.GetFileNameWithoutExtension(mediaUrl);
+
+            //if caching is enabled check if cache is valid or not then load
+            //data from local storage else download from internet
             if (enableCaching && IsCacheValid())
             {
                 LoadCachedImage();
             }
             else
             {
-                StartCoroutine(DownloadImage(MediaUrl));
+                StartCoroutine(DownloadImage(mediaUrl));
             }
         }
 
@@ -76,7 +99,7 @@ namespace YogeshBen.CloudImage
         {
             if (url != null)
             {
-                StartCoroutine(DownloadImage(MediaUrl));
+                StartCoroutine(DownloadImage(mediaUrl));
             }
             else
             {
@@ -92,7 +115,8 @@ namespace YogeshBen.CloudImage
             byte[] bytes = LoadTexture();
             if (bytes == null)
             {
-                OnCloudImageDownloadFailed(this, "Failed to load saved data!");
+                if (OnCloudImageDownloadFailed != null)
+                    OnCloudImageDownloadFailed(this, CloudImageErrorType.LocalFail, "Failed to load saved data!");
             }
             else
             {
@@ -122,19 +146,17 @@ namespace YogeshBen.CloudImage
                 {
                     Texture2D texture = ((DownloadHandlerTexture)webRequest.downloadHandler).texture;
 
+                    //If caching is enabled save data to local storage
                     if (enableCaching)
                         SaveTexture(texture);
 
                     //Set downloaded texture into the component 
                     SetComponent(texture);
-
-                    if (OnCloudImageDownloaded != null)
-                        OnCloudImageDownloaded(this);
                 }
                 else
                 {
                     if (OnCloudImageDownloadFailed != null)
-                        OnCloudImageDownloadFailed(this, webRequest.error);
+                        OnCloudImageDownloadFailed(this, CloudImageErrorType.CloudFail, webRequest.error);
 
                     Debug.LogError(webRequest.error);
                 }
@@ -150,14 +172,20 @@ namespace YogeshBen.CloudImage
                 case CloudImageType.UIImage:
                     // assign sprite to the Image attached to this gameObject
                     this.GetComponent<Image>().sprite = sprite;
+                    if (OnCloudImageDownloadSuccessful != null)
+                        OnCloudImageDownloadSuccessful(this);
                     break;
                 case CloudImageType.SpriteRenderer:
                     // assign sprite to the SpriteRenderer attached to this gameObject
                     this.GetComponent<SpriteRenderer>().sprite = sprite;
+                    if (OnCloudImageDownloadSuccessful != null)
+                        OnCloudImageDownloadSuccessful(this);
                     break;
                 case CloudImageType.MeshRenderer:
                     // assign texture to the Smaterial attached to this gameObject
                     this.GetComponent<MeshRenderer>().material.mainTexture = texture;
+                    if (OnCloudImageDownloadSuccessful != null)
+                        OnCloudImageDownloadSuccessful(this);
                     break;
             }
         }
@@ -177,15 +205,18 @@ namespace YogeshBen.CloudImage
 
             string[] split = lastUpdate.Split('/');
 
-            int pastSDate = int.Parse(split[0]);
+            int pastDate = int.Parse(split[0]);
             int pastHour = int.Parse(split[1]);
+            int pastMonth = int.Parse(split[2]);
 
             int currentDate = DateTime.Now.Day;
             int currentHour = DateTime.Now.Hour;
+            int currentMonth = DateTime.Now.Month;
 
-            int dateDiff = currentDate - pastSDate;
+            int monthDiff = currentMonth - pastMonth;
+            int dateDiff = currentDate - pastDate;
 
-            if (dateDiff < 0)
+            if (monthDiff > 0)
             {
                 return false;
             }
@@ -213,19 +244,61 @@ namespace YogeshBen.CloudImage
             }
         }
 
+        /// <summary>
+        /// Function for deleting a perticular cached data based on there url
+        /// </summary>
+        /// <param name="url"></param>
+        public void DeleteCachedData(string url = null)
+        {
+            string fName = url == null ? Path.GetFileNameWithoutExtension(mediaUrl) : Path.GetFileNameWithoutExtension(url);
+
+            //Reset PlayerPref
+            PlayerPrefs.DeleteKey(fName);
+
+            string path = Application.persistentDataPath + fName;
+
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                Debug.LogWarning("Directory does not exist");
+                return;
+            }
+
+            if (!File.Exists(path))
+            {
+                Debug.LogError("File does not exist");
+                return;
+            }
+
+            //Delete file
+            File.Delete(path);
+            Debug.Log("File delete successfully");
+
+        }
+
+
+        /// <summary>
+        /// Function used to save data to local storage
+        /// </summary>
+        /// <param name="texture"></param>
         private void SaveTexture(Texture2D texture)
         {
-            string path = Application.persistentDataPath + Path.GetFileNameWithoutExtension(MediaUrl);
+            string path = Application.persistentDataPath + mediaName;
             //Create Directory if it does not exist
             if (!Directory.Exists(Path.GetDirectoryName(path)))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
             }
 
+            if(File.Exists(path))
+            {
+                //Delete cached file
+                File.Delete(path);
+            }
+
             try
             {
                 File.WriteAllBytes(path, texture.EncodeToPNG());
-                lastUpdateTime = DateTime.Now.Day + "/" + DateTime.Now.Hour;
+                lastUpdateTime = DateTime.Now.Day + "/" + DateTime.Now.Hour + "/" + DateTime.Now.Month;
                 Debug.Log("Saved Data to: " + path.Replace("/", "\\"));
             }
             catch (Exception e)
@@ -235,9 +308,13 @@ namespace YogeshBen.CloudImage
             }
         }
 
+        /// <summary>
+        /// Function used to load data from local storage.
+        /// </summary>
+        /// <returns></returns>
         private byte[] LoadTexture()
         {
-            string path = Application.persistentDataPath + Path.GetFileNameWithoutExtension(MediaUrl);
+            string path = Application.persistentDataPath + mediaName;
 
             byte[] dataByte = null;
 
