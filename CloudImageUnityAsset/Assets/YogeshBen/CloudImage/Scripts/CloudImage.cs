@@ -124,7 +124,7 @@ namespace YogeshBen.CloudImage
                 texture = new Texture2D(2, 2);
                 texture.LoadImage(bytes);
                 //Set Loaded texture into the component 
-                SetComponent(texture);
+                SetComponent(ref texture);
             }
         }
 
@@ -148,10 +148,10 @@ namespace YogeshBen.CloudImage
 
                     //If caching is enabled save data to local storage
                     if (enableCaching)
-                        SaveTexture(texture);
+                        SaveTexture(ref texture);
 
                     //Set downloaded texture into the component 
-                    SetComponent(texture);
+                    SetComponent(ref texture);
                 }
                 else
                 {
@@ -163,8 +163,10 @@ namespace YogeshBen.CloudImage
             }
         }
 
-        private void SetComponent(Texture2D texture)
+        private void SetComponent(ref Texture2D texture)
         {
+            //Give name to texture for memory refrence
+            texture.name = mediaName;
             //Create sprite from texture
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
             switch (ObjectType)
@@ -280,7 +282,7 @@ namespace YogeshBen.CloudImage
         /// Function used to save data to local storage
         /// </summary>
         /// <param name="texture"></param>
-        private void SaveTexture(Texture2D texture)
+        private void SaveTexture(ref Texture2D texture)
         {
             string path = Application.persistentDataPath + mediaName;
             //Create Directory if it does not exist
