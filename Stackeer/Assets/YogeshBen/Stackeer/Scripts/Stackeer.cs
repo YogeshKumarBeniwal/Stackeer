@@ -412,10 +412,10 @@ namespace YogeshBen.Stackeer
                 yield return null;
             }
 
-            Texture2D texture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
-
             if (uwr.error == null)
             {
+                Texture2D texture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+
                 switch (imageEncodeFormet)
                 {
                     case IMAGE_ENCODE_FORMET.JPEG:
@@ -425,6 +425,11 @@ namespace YogeshBen.Stackeer
                         File.WriteAllBytes(filePath + uniqueHash, texture.EncodeToPNG());
                         break;
                 }
+            }
+            else
+            {
+                Error("Error while downloading the image : " + uwr.error);
+                yield break;
             }
 
             uwr.Dispose();
@@ -450,7 +455,7 @@ namespace YogeshBen.Stackeer
             {
                 if (uwr.error != null)
                 {
-                    Error("Error while downloading the image : " + uwr.error);
+                    Error("Error while downloading the GET response : " + uwr.error);
                     yield break;
                 }
 
@@ -465,7 +470,14 @@ namespace YogeshBen.Stackeer
             }
 
             if (uwr.error == null)
+            {
                 File.WriteAllText(filePath + uniqueHash, uwr.downloadHandler.text);
+            }
+            else
+            {
+                Error("Error while downloading the GET response : " + uwr.error);
+                yield break;
+            }
 
             uwr.Dispose();
             uwr = null;
