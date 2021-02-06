@@ -380,7 +380,7 @@ namespace YogeshBen.Stackeer
 
         private void SetImageEncodeType()
         {
-            imageEncodeFormet = Path.GetExtension(url) == "png" ? IMAGE_ENCODE_FORMET.PNG : IMAGE_ENCODE_FORMET.JPEG;
+            imageEncodeFormet = Path.GetExtension(url) == ".png" ? IMAGE_ENCODE_FORMET.PNG : IMAGE_ENCODE_FORMET.JPEG;
 
             if (enableLog)
                 Debug.Log("[Stackeer] Image encode formet set to : " + imageEncodeFormet);
@@ -419,10 +419,10 @@ namespace YogeshBen.Stackeer
                 switch (imageEncodeFormet)
                 {
                     case IMAGE_ENCODE_FORMET.JPEG:
-                        File.WriteAllBytes(filePath + uniqueHash, ((DownloadHandlerTexture)uwr.downloadHandler).texture.EncodeToJPG());
+                        File.WriteAllBytes(filePath + uniqueHash, texture.EncodeToJPG());
                         break;
                     case IMAGE_ENCODE_FORMET.PNG:
-                        File.WriteAllBytes(filePath + uniqueHash, ((DownloadHandlerTexture)uwr.downloadHandler).texture.EncodeToPNG());
+                        File.WriteAllBytes(filePath + uniqueHash, texture.EncodeToPNG());
                         break;
                 }
             }
@@ -562,11 +562,16 @@ namespace YogeshBen.Stackeer
             {
                 byte[] fileData;
                 fileData = File.ReadAllBytes(filePath + uniqueHash);
+
+                if (fileData == null)
+                    Error("[Stackeer] Failed to load image data.");
+
                 texture = new Texture2D(2, 2);
                 texture.LoadImage(fileData);
-            }
 
-            Color color;
+                //Give name to texture for memory refrence
+                texture.name = uniqueHash;
+            }
 
             if (targetObj != null)
                 switch (rendererType)
@@ -578,7 +583,6 @@ namespace YogeshBen.Stackeer
                             break;
 
                         renderer.material.mainTexture = texture;
-
                         break;
 
                     case RENDERER_TYPE.UI_IMAGE:
@@ -588,10 +592,9 @@ namespace YogeshBen.Stackeer
                             break;
 
                         Sprite sprite = Sprite.Create(texture,
-                             new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                             new Rect(0, 0, texture.width, texture.height), Vector2.zero);
 
                         image.sprite = sprite;
-                        color = image.color;
                         break;
                 }
 
