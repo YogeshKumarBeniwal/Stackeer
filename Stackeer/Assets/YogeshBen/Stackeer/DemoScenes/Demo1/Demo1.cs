@@ -18,8 +18,8 @@ public class Demo1 : MonoBehaviour
 
     private void Start()
     {
-        Stackeer.Get().Load(imageUrl).SetContentType(CONTENT_TYPE.IMAGE).SetEnableLog(true).Into(image).StartStackeer();
-        Stackeer.Get().Load(jsonUrl).SetContentType(CONTENT_TYPE.JSON).SetEnableLog(true)
+        Stackeer.Get().Load(imageUrl).SetWebRequestType(WEB_REQUEST_TYPE.GET_TEXTURE).SetEnableLog(true).Into(image).StartStackeer();
+        Stackeer.Get().Load(jsonUrl).SetWebRequestType(WEB_REQUEST_TYPE.HTTP_GET).SetEnableLog(true)
             .WithJsonLoadedAction(OnJsonLoaded).StartStackeer();
     }
 

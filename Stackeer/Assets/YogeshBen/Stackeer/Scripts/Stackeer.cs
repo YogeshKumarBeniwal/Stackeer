@@ -10,11 +10,11 @@ using UnityEngine.UI;
 
 namespace YogeshBen.Stackeer
 {
-    public enum CONTENT_TYPE
+    public enum WEB_REQUEST_TYPE
     {
         NONE,
-        JSON,
-        IMAGE
+        HTTP_GET,
+        GET_TEXTURE
     }
 
     public enum RENDERER_TYPE
@@ -41,7 +41,7 @@ namespace YogeshBen.Stackeer
 
         private bool enableLog = false;
         private bool cached = true;
-        private CONTENT_TYPE contentType = CONTENT_TYPE.NONE;
+        private WEB_REQUEST_TYPE contentType = WEB_REQUEST_TYPE.NONE;
         private IMAGE_ENCODE_FORMET imageEncodeFormet = IMAGE_ENCODE_FORMET.PNG;
 
 
@@ -57,7 +57,7 @@ namespace YogeshBen.Stackeer
             OnAlreadyCachedAction = null,
             onEndAction = null;
 
-        private UnityAction<string> onJsonLoadedAction;
+        private UnityAction<string> onResponseLoadedAction;
         private UnityAction<int> onDownloadProgressChange;
         private UnityAction<string> onErrorAction;
 
@@ -137,7 +137,7 @@ namespace YogeshBen.Stackeer
 
         public Stackeer WithJsonLoadedAction(UnityAction<string> action)
         {
-            this.onJsonLoadedAction = action;
+            this.onResponseLoadedAction = action;
 
             if (enableLog)
                 Debug.Log("[Stackeer] On JSON Downloaded action set : " + action);
@@ -201,7 +201,7 @@ namespace YogeshBen.Stackeer
         /// </summary>
         /// <param name="contentType">Type type of content you want to load from the web.</param>
         /// <returns></returns>
-        public Stackeer SetContentType(CONTENT_TYPE contentType)
+        public Stackeer SetWebRequestType(WEB_REQUEST_TYPE contentType)
         {
             this.contentType = contentType;
 
@@ -292,13 +292,13 @@ namespace YogeshBen.Stackeer
                 return;
             }
 
-            if (contentType == CONTENT_TYPE.NONE)
+            if (contentType == WEB_REQUEST_TYPE.NONE)
             {
                 Error("[Stackeer] Download Content Type has not been set. Use 'SetContentType' function to set target component.");
                 return;
             }
 
-            if (contentType == CONTENT_TYPE.IMAGE)
+            if (contentType == WEB_REQUEST_TYPE.GET_TEXTURE)
             {
                 if (rendererType == RENDERER_TYPE.NONE || targetObj == null)
                 {
@@ -334,7 +334,7 @@ namespace YogeshBen.Stackeer
 
                     CheckDownloadContentTypeAndInvokeRespectiveAction(
                     () => LoadSpriteToImage(),
-                    () => LoadJsonData());
+                    () => LoadResponseData());
                 };
             }
             else
@@ -346,7 +346,7 @@ namespace YogeshBen.Stackeer
 
                     CheckDownloadContentTypeAndInvokeRespectiveAction(
                     () => LoadSpriteToImage(),
-                    () => LoadJsonData());
+                    () => LoadResponseData());
                 }
                 else
                 {
@@ -354,7 +354,7 @@ namespace YogeshBen.Stackeer
                     StopAllCoroutines();
                     CheckDownloadContentTypeAndInvokeRespectiveAction(
                     () => StartCoroutine(ImageDownloader()),
-                    () => StartCoroutine(JsonDownloader()));
+                    () => StartCoroutine(GetRequest()));
                 }
             }
         }
@@ -368,7 +368,7 @@ namespace YogeshBen.Stackeer
             }
             catch
             {
-                if(enableGlobalLogs)
+                if (enableGlobalLogs)
                     Debug.LogError("[Stackeer] Url is not correct.");
                 return false;
             }
@@ -438,7 +438,7 @@ namespace YogeshBen.Stackeer
             underProcessStackeers.Remove(uniqueHash);
         }
 
-        private IEnumerator JsonDownloader()
+        private IEnumerator GetRequest()
         {
             if (enableLog)
                 Debug.Log("[Stackeer] Download started.");
@@ -473,12 +473,12 @@ namespace YogeshBen.Stackeer
             if (onDownloadedAction != null)
                 onDownloadedAction.Invoke();
 
-            LoadJsonData();
+            LoadResponseData();
 
             underProcessStackeers.Remove(uniqueHash);
         }
 
-        private void LoadJsonData()
+        private void LoadResponseData()
         {
             progress = 100;
             if (onDownloadProgressChange != null)
@@ -489,26 +489,26 @@ namespace YogeshBen.Stackeer
 
             if (!File.Exists(filePath + uniqueHash))
             {
-                Error("Loading JSON file has been failed.");
+                Error("Loading Response file has been failed.");
                 return;
             }
 
-            JsonLoader();
+            ResponseLoader();
         }
 
-        private void JsonLoader()
+        private void ResponseLoader()
         {
             if (enableLog)
-                Debug.Log("[Stackeer] Start loading JSON.");
+                Debug.Log("[Stackeer] Start loading Response.");
 
-            if (onJsonLoadedAction != null)
-                onJsonLoadedAction.Invoke(File.ReadAllText(filePath + uniqueHash));
+            if (onResponseLoadedAction != null)
+                onResponseLoadedAction.Invoke(File.ReadAllText(filePath + uniqueHash));
 
             if (OnLoadedAction != null)
                 OnLoadedAction.Invoke();
 
             if (enableLog)
-                Debug.Log("[Stackeer] JSON has been loaded.");
+                Debug.Log("[Stackeer] Response has been loaded.");
 
             success = true;
             Finish();
@@ -715,13 +715,13 @@ namespace YogeshBen.Stackeer
         {
             switch (contentType)
             {
-                case CONTENT_TYPE.IMAGE:
+                case WEB_REQUEST_TYPE.GET_TEXTURE:
                     imageAction?.Invoke();
                     break;
-                case CONTENT_TYPE.JSON:
+                case WEB_REQUEST_TYPE.HTTP_GET:
                     jsonAction?.Invoke();
                     break;
-                case CONTENT_TYPE.NONE:
+                case WEB_REQUEST_TYPE.NONE:
                     Error("Forget to set Download content type!");
                     break;
             }
