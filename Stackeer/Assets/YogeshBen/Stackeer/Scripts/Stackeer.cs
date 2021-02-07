@@ -717,7 +717,8 @@ namespace YogeshBen.Stackeer
         {
             try
             {
-                Directory.Delete(filePath, true);
+                if(Directory.Exists(filePath))
+                    Directory.Delete(filePath, true);
 
                 if (enableGlobalLogs)
                     Debug.Log("[Stackeer] All Stackeer cached files has been cleared.");
