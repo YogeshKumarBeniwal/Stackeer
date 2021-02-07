@@ -654,6 +654,9 @@ namespace YogeshBen.Stackeer
 
         private void Finish()
         {
+            if (underProcessStackeers.ContainsKey(uniqueHash))
+                underProcessStackeers.Remove(uniqueHash);
+
             if (enableLog)
                 Debug.Log("[Stackeer] Operation has been finished.");
 
