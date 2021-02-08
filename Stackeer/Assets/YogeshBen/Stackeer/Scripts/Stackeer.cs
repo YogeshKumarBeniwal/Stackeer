@@ -57,7 +57,7 @@ namespace YogeshBen.Stackeer
             OnAlreadyCachedAction = null,
             onEndAction = null;
 
-        private UnityAction<string> onResponseLoadedAction;
+        private UnityAction<string> onGetResponseLoadedAction;
         private UnityAction<int> onDownloadProgressChange;
         private UnityAction<string> onErrorAction;
 
@@ -135,9 +135,9 @@ namespace YogeshBen.Stackeer
             return this;
         }
 
-        public Stackeer WithJsonLoadedAction(UnityAction<string> action)
+        public Stackeer WithGetResponseLoadedAction(UnityAction<string> action)
         {
-            this.onResponseLoadedAction = action;
+            this.onGetResponseLoadedAction = action;
 
             if (enableLog)
                 Debug.Log("[Stackeer] On JSON Downloaded action set : " + action);
@@ -513,8 +513,8 @@ namespace YogeshBen.Stackeer
             if (enableLog)
                 Debug.Log("[Stackeer] Start loading Response.");
 
-            if (onResponseLoadedAction != null)
-                onResponseLoadedAction.Invoke(File.ReadAllText(filePath + uniqueHash));
+            if (onGetResponseLoadedAction != null)
+                onGetResponseLoadedAction.Invoke(File.ReadAllText(filePath + uniqueHash));
 
             if (OnLoadedAction != null)
                 OnLoadedAction.Invoke();
